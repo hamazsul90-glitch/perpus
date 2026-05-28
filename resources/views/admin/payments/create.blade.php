@@ -25,10 +25,19 @@
 
     @if(isset($existing) && $existing && $existing->method === 'qris')
         <div class="mt-6">
-            <h3 class="font-bold">QRIS</h3>
-            <p>Scan QR ini untuk membayar:</p>
-            <img src="https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl={{ urlencode($existing->qris_payload) }}" alt="qris" />
-            <p class="mt-3 text-slate-300">Payload: <code class="break-all">{{ $existing->qris_payload }}</code></p>
+            <h3 class="font-bold mb-3">QRIS - Kode QR Standar Pembayaran Nasional</h3>
+            <p class="mb-4">Scan QR ini untuk membayar:</p>
+            @php
+                $qrDataUri = \App\Services\QrCodeRenderer::generateDataUri($existing->qris_payload);
+            @endphp
+            @if($qrDataUri)
+                <img src="{{ $qrDataUri }}" alt="qris" class="h-80 w-80 mx-auto" />
+            @else
+                <div class="h-80 w-80 mx-auto bg-slate-800 flex items-center justify-center text-slate-400">
+                    QR Code tidak dapat dibuat
+                </div>
+            @endif
+            <p class="mt-3 text-slate-300 break-all text-xs"><code>{{ $existing->qris_payload }}</code></p>
         </div>
     @elseif(request('method') === 'qris')
         <div class="mt-6 rounded-3xl border border-white/10 bg-slate-950/90 p-4 text-slate-300">

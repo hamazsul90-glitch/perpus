@@ -39,6 +39,12 @@
                         <a href="{{ route('admin.payments.create', $loan) }}" class="rounded-full bg-blue-600 px-3 py-1 text-xs font-semibold text-white">Bayar</a>
                         <a href="{{ route('admin.payments.create', $loan) }}?method=qris" class="rounded-full bg-indigo-600 px-3 py-1 text-xs font-semibold text-white">QRIS</a>
                         <a href="{{ route('admin.payments.create', $loan) }}?method=cash" class="rounded-full bg-emerald-600 px-3 py-1 text-xs font-semibold text-white">Cash</a>
+                        @if($loan->payment && $loan->payment->method === 'qris' && $loan->payment->status !== 'paid' && $loan->payment->qris_payload)
+                            <form method="POST" action="{{ route('admin.payments.markPaid', $loan->payment) }}">
+                                @csrf
+                                <button type="submit" class="rounded-full bg-lime-500 px-3 py-1 text-xs font-semibold text-slate-950">Settle</button>
+                            </form>
+                        @endif
                     </div>
                 </div>
             @empty

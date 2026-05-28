@@ -7,6 +7,7 @@ use App\Models\Loan;
 use App\Models\Member;
 use App\Models\Payment;
 use App\Services\QrisGenerator;
+use App\Services\QrCodeRenderer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Carbon;
@@ -134,7 +135,12 @@ class LoanController extends Controller
             $loan->load('payment');
         }
 
-        return view('loans.show', compact('loan'));
+        $qrDataUri = '';
+        if ($loan->payment && $loan->payment->method === 'qris' && $loan->payment->qris_payload) {
+            $qrDataUri = QrCodeRenderer::generateDataUri($loan->payment->qris_payload);
+        }
+
+        return view('loans.show', compact('loan', 'qrDataUri'));
     }
 
     public function markReturned(Loan $loan)

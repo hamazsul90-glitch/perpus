@@ -43,12 +43,18 @@
 
             @if(optional($loan->payment)->method === 'qris')
                 <div class="rounded-3xl border border-white/10 bg-slate-900 p-4 text-slate-300">
-                    <div class="text-sm font-medium text-white">QRIS</div>
+                    <div class="text-sm font-medium text-white">QRIS - Kode QR Standar Pembayaran Nasional</div>
                     <p class="mt-2">Silakan scan QRIS berikut untuk menyelesaikan pembayaran.</p>
                     <div class="mt-4 flex items-center justify-center">
-                        <img src="https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl={{ urlencode($loan->payment->qris_payload) }}" alt="QRIS" class="mx-auto rounded-3xl bg-white p-4" />
+                        @if($qrDataUri)
+                            <img src="{{ $qrDataUri }}" alt="QRIS" class="h-80 w-80 rounded-3xl" />
+                        @else
+                            <div class="h-80 w-80 rounded-3xl bg-slate-800 flex items-center justify-center text-slate-400">
+                                QR Code tidak dapat dibuat
+                            </div>
+                        @endif
                     </div>
-                    <p class="mt-4 break-words text-xs text-slate-400"><strong>Payload:</strong> {{ $loan->payment->qris_payload }}</p>
+                    <p class="mt-4 break-words text-xs text-slate-500"><strong>Referensi:</strong> {{ $loan->payment->qris_payload ? substr($loan->payment->qris_payload, 0, 50) . '...' : '—' }}</p>
                 </div>
             @elseif($loan->payment && $loan->payment->method === 'cash')
                 <div class="rounded-3xl border border-white/10 bg-slate-900 p-4 text-slate-300">
